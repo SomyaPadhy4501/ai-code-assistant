@@ -2,3 +2,5 @@
 .sites-runtime/
 node_modules/
 .task-cache/
+models.json
+.tts/

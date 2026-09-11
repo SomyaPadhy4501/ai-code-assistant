@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { randomInt } from 'node:crypto';
+import { parseTestNames } from './scoring.mjs';
 const dataset = 'SWE-bench/SWE-bench_Multilingual';
 const languages = {'.java':'java','.go':'go','.rs':'rust','.rb':'ruby','.php':'php','.ts':'typescript','.tsx':'typescript','.js':'node','.jsx':'node','.c':'c','.h':'c','.cpp':'cpp','.cc':'cpp','.hpp':'cpp'};
 export function sanitizeTask(row) {
@@ -9,9 +10,9 @@ export function sanitizeTask(row) {
   const counts={}; for(const name of names){const lang=languages[path.extname(name)];if(lang)counts[lang]=(counts[lang]||0)+1;}
   const language=Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0]||'cpp';
   // Never cache or return the reference solution or hints.
-  return {id:row.instance_id, repo:row.repo, commit:row.base_commit, image:row.image, brief:row.problem_statement, created:row.created_at, language, evalScript:row.eval_script, expectedFailures:row.FAIL_TO_PASS, source:`https://huggingface.co/datasets/${dataset}`};
+  return {id:row.instance_id, repo:row.repo, commit:row.base_commit, image:row.image, brief:row.problem_statement, created:row.created_at, language, evalScript:row.eval_script, expectedFailures:parseTestNames(row.FAIL_TO_PASS), expectedPasses:parseTestNames(row.PASS_TO_PASS), source:`https://huggingface.co/datasets/${dataset}`};
 }
-export function publicTask(task) { const {evalScript, ...safe}=task; return safe; }
+export function publicTask(task) { const {evalScript, expectedFailures, expectedPasses, ...safe}=task; return {...safe, targetTests:(expectedFailures||[]).length}; }
 let loading;
 export async function loadTasks(cacheDir) {
   if(loading)return loading;

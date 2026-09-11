@@ -1,13 +1,169 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Local AI-assisted debugging interview practice."><title>Debug Gym — Interview practice</title><link rel="stylesheet" href="/style.css"></head>
 <body>
-<header><a class="brand" href="/">[<span>d</span>] <strong>debug gym</strong></a><span class="header-note">AI-assisted interview practice</span><button id="setupButton">Local setup <span id="health">○</span></button></header>
+<header class="titlebar">
+  <a class="brand" href="/"><span class="brand-mark">d</span> <strong>debug gym</strong></a>
+  <div class="work-heading"><button id="back" class="ghost" hidden>← Library</button><button id="briefButton" class="ghost" hidden>Problem statement</button></div>
+  <div class="titlebar-right"><span class="session-clock" hidden id="clockWrap"><span id="timer">00:00</span><small>elapsed</small></span><button id="themeToggle" class="icon-button theme-toggle" title="Switch theme" aria-label="Switch between light and dark theme"></button><button id="setupButton" class="ghost">Local setup <span id="health" class="dot">○</span></button></div>
+</header>
 <main>
-<section id="lobby"><div class="intro"><p class="eyebrow">PRACTICE / DEBUGGING</p><h1>Your reasoning.<br>A little AI assistance.</h1><p>Find the bug, question the suggestion, ship the fix.<br>Practice with a small local coding model by your side.</p></div>
-<section class="random-panel"><div><p class="eyebrow">REAL-WORLD REPOSITORIES</p><h2>A new codebase. A real issue.</h2><p>Random tasks from SWE-bench Multilingual. Work in the historical source of established projects, with the issue brief and its regression tests.</p><a href="https://www.swebench.com/multilingual.html" target="_blank" rel="noreferrer">About the task library ↗</a></div><div><label for="taskLanguage">Task language</label><select id="taskLanguage"><option value="all">Surprise me · All 9 languages</option><option value="c">C</option><option value="cpp">C++</option><option value="go">Go</option><option value="java">Java</option><option value="node">JavaScript</option><option value="typescript">TypeScript</option><option value="php">PHP</option><option value="ruby">Ruby</option><option value="rust">Rust</option></select><label for="taskScope">Codebase era</label><select id="taskScope"><option value="all">All historical tasks</option><option value="legacy">Legacy · 2020 and earlier</option></select><button id="randomTask" class="primary">Find my next task ↗</button></div><div id="taskPreview" hidden></div><p id="taskProgress" role="status"></p><small>Tasks include bug fixes and feature work. New selections avoid repeats until the matching pool is exhausted. Large environments can require several GB of disk and minutes to prepare.</small></section>
-<div class="section-title"><h2>Or warm up with a short incident</h2><span>Real files · Failing tests · Local execution</span></div><div id="challenges" class="cards"></div>
-<section class="github"><div><p class="eyebrow">BRING A CODEBASE</p><h2>Start from GitHub</h2><p>Import any public repository, including large or archived projects. Choose your own issue and configure its test command.</p></div><div class="repo-controls"><form id="importForm"><label for="repoUrl">Public repository URL</label><div class="inline"><input id="repoUrl" placeholder="https://github.com/owner/repo" type="url" required><button class="primary">Import repo</button></div></form><form id="searchForm"><label for="query">Find repositories</label><div class="inline"><input id="query" value="stars:>1000"><button>Search GitHub</button></div></form></div><div id="results"></div></section>
-<p class="footnote">A 0.5B model can be wrong. Verifying its advice is part of the exercise.</p></section>
-<section id="workspace" hidden><div class="work-heading"><div><button id="back">← Challenges</button><h1 id="sessionTitle"></h1></div><div class="session-meta"><span id="timer">00:00</span><span>elapsed</span></div></div><details class="brief" open><summary>Incident brief</summary><p id="brief"></p><small id="source"></small></details>
-<div class="work-grid"><aside class="file-panel"><div class="panel-label">EXPLORER</div><input id="fileFilter" aria-label="Filter source files" placeholder="Find a file…"><p id="fileCount"></p><div id="files"></div></aside><section class="editor-panel"><div class="editor-bar"><span id="fileName">Select a file</span><button id="save">Save file</button></div><textarea id="editor" spellcheck="false" aria-label="Code editor" placeholder="Open a file from the explorer"></textarea><div class="run-bar"><select id="runtime" aria-label="Runtime"></select><input id="command" aria-label="Test command" value="node --test"><button id="run" class="primary">▶ Run tests</button></div><details class="runtime-settings"><summary>Test environment</summary><label for="runtimeImage">Runtime image (must contain your project's dependencies)</label><input id="runtimeImage" placeholder="Default language image"><p id="environmentNote"></p></details><div class="output-label">TEST OUTPUT <span id="testState">Not run</span></div><pre id="output">Run the tests to establish your starting point.</pre></section><aside class="assistant-panel"><div class="assistant-heading"><h2>Practice copilot</h2><span class="model-badge">0.5B · LOCAL</span></div><p class="assistant-note">Qwen2.5 Coder · 4K context<br>Receives the saved open file and recent test output.</p><div id="messages" role="log" aria-live="polite"><div class="message assistant">What are you investigating? Run the tests, then ask me for a second pair of eyes.</div></div><form id="chatForm"><label for="prompt">Ask your copilot</label><textarea id="prompt" required maxlength="4000" placeholder="What could be causing this failure?"></textarea><button class="primary">Send question ↗</button></form></aside></div></section>
-</main><dialog id="setup"><div class="dialog-heading"><h2>Set up your local gym</h2><button id="closeSetup" aria-label="Close setup">×</button></div><p>The app runs on your computer. Two local services power the practice environment.</p><h3>1. Start Docker Desktop</h3><p>Docker needs WSL 2 on Windows. Runtime images download automatically the first time you run tests. Code executes without network access and cannot write to your host files.</p><h3>2. Start Ollama</h3><p>Get Ollama from <a href="https://ollama.com/download" target="_blank" rel="noreferrer">ollama.com</a>, then download the small coding model:</p><pre>ollama pull qwen2.5-coder:0.5b</pre><button id="pull">Download model through Ollama</button><button id="refreshStatus">Check connections</button><p id="setupStatus" role="status"></p><p class="footnote">16 runtime presets are available for imported code. The random task library covers 9 languages and supplies task-specific images. Generic images supply compilers, but project dependencies may need a custom prepared image.</p></dialog><div id="notice" role="status" hidden></div><script type="module" src="/app.js"></script></body></html>
+<section id="lobby">
+  <div class="hero">
+    <p class="eyebrow">45-MINUTE MOCK INTERVIEW</p>
+    <h1>Debug a real codebase,<br>on the clock.</h1>
+    <p class="lede">Investigate a real issue, fix it, extend it, and explain your design — with an interviewer asking follow-ups and a deliberately limited local AI beside you.</p>
+  </div>
+
+  <section class="surface setup-panel">
+    <h2>Set up your interview</h2>
+    <div class="setup-grid">
+      <div>
+        <label for="interviewLanguage">Language</label>
+        <select id="interviewLanguage">
+          <option value="node">JavaScript</option><option value="typescript">TypeScript</option><option value="python">Python</option>
+          <option value="java">Java</option><option value="go">Go</option><option value="cpp">C++</option><option value="c">C</option>
+          <option value="rust">Rust</option><option value="ruby">Ruby</option><option value="php">PHP</option>
+        </select>
+      </div>
+      <div>
+        <label for="interviewSource">Codebase</label>
+        <select id="interviewSource">
+          <option value="real">Find one on GitHub for me</option>
+          <option value="link">I'll paste a repository link</option>
+          <option value="short">Short built-in exercise · no download</option>
+        </select>
+      </div>
+    </div>
+    <div id="repoLinkRow" hidden>
+      <label for="repoUrl">Public repository URL</label>
+      <input id="repoUrl" type="url" placeholder="https://github.com/owner/repo">
+    </div>
+    <div id="eraRow">
+      <label for="taskScope">Codebase era</label>
+      <select id="taskScope"><option value="all">Any historical task</option><option value="legacy">Legacy · 2020 and earlier</option></select>
+    </div>
+    <button id="prepareInterview" class="primary setup-go">Prepare codebase →</button>
+    <p id="interviewSetupStatus" role="status" class="progress-line"></p>
+    <small class="fine">The codebase is downloaded and its environment prepared <em>before</em> the clock starts. Real GitHub tasks come from SWE-bench Multilingual with their original issue and regression tests; they can need several GB of disk and some minutes to prepare. A pasted repository has no known failing test, so you choose what to investigate and which test command to run.</small>
+  </section>
+
+  <p class="footnote">Everything runs on your machine. The copilot is small enough to be wrong — checking it is part of the exercise.</p>
+</section>
+
+<section id="workspace" hidden>
+  <div class="ide">
+    <aside class="sidebar">
+      <div class="side-head"><span>Explorer</span><button id="newFile" class="icon-button" title="New file">+</button></div>
+      <input id="fileFilter" class="side-input" aria-label="Search files, folders and contents" placeholder="Search files and contents…">
+      <div id="tree" class="tree" role="tree"></div>
+      <div id="codeSearchResults" class="search-results"></div>
+      <p id="fileCount" class="side-foot"></p>
+    </aside>
+
+    <div class="splitter" data-split="sidebar" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Resize the explorer"></div>
+
+    <section class="editor-area">
+      <div id="tabs" class="tabs" role="tablist"></div>
+      <div class="editor-toolbar">
+        <select id="runTarget" aria-label="What to run" class="toolbar-select"></select>
+        <input id="command" aria-label="Command to run" class="toolbar-input" value="node --test">
+        <button id="run" class="primary toolbar-run">▶ Run</button>
+        <span class="toolbar-sep"></span>
+        <button id="save" class="toolbar-button">Save</button>
+        <button id="copilotToggle" class="toolbar-button toolbar-copilot">Copilot</button>
+        <details class="runtime-settings" id="envSettings" hidden>
+          <summary>Environment</summary>
+          <div class="runtime-settings-body">
+            <label for="runtime">Language preset</label><select id="runtime"></select>
+            <label for="runtimeImage">Runtime image (must contain your project's dependencies)</label><input id="runtimeImage" placeholder="Default language image">
+            <p id="environmentNote"></p>
+          </div>
+        </details>
+      </div>
+      <div class="editor-host"><div id="monaco"></div><div id="editorEmpty" class="editor-empty">Select a file from the explorer, or press <kbd>Cmd</kbd><kbd>P</kbd></div></div>
+      <div class="splitter-h" data-split="panel" role="separator" aria-orientation="horizontal" tabindex="0" aria-label="Resize the output panel"></div>
+      <div class="panel" id="panel">
+        <div class="panel-bar">
+          <button class="panel-tab" data-panel="problems">Problems <span id="problemCount" class="pill">0</span></button>
+          <button class="panel-tab active" data-panel="output">Output</button>
+          <button class="panel-tab" data-panel="result">Result <span id="testState" class="pill">Not run</span></button>
+          <span id="statusCursor" class="panel-meta"></span>
+          <button id="togglePanel" class="icon-button panel-toggle" title="Collapse panel">⌄</button>
+        </div>
+        <div class="panel-body">
+          <div id="problems" class="panel-pane" data-panel="problems" hidden></div>
+          <pre id="output" class="panel-pane" data-panel="output">Run the tests to establish your starting point.</pre>
+          <div id="score" class="panel-pane" data-panel="result" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="splitter" data-split="copilot" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Resize the copilot panel"></div>
+
+    <aside class="copilot">
+      <div class="copilot-head"><h2>Copilot</h2></div>
+      <div id="messages" role="log" aria-live="polite"><div class="message assistant">What are you investigating? Run the tests, then ask me for a second pair of eyes.</div></div>
+      <form id="chatForm" class="composer">
+        <div class="composer-box">
+          <textarea id="prompt" required maxlength="4000" rows="1" placeholder="Ask about this failure, or type / for commands" aria-label="Ask your copilot"></textarea>
+          <button class="composer-send" id="sendChat" aria-label="Send question" title="Send (Enter)">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V5M10 4.5 5.5 9M10 4.5 14.5 9"/></svg>
+          </button>
+        </div>
+        <div class="composer-tools">
+          <button type="button" id="contextRing" class="context-ring" aria-label="Context usage">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle class="ring-track" cx="12" cy="12" r="9"></circle><circle class="ring-fill" cx="12" cy="12" r="9"></circle></svg>
+            <span id="contextLabel">0%</span>
+          </button>
+          <span class="composer-spacer"></span>
+          <button type="button" id="chatsToggle" class="icon-tool" aria-expanded="false" title="Saved chats" aria-label="Saved chats">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.5a6.5 6.5 0 1 1-6.2 8.4"/><path d="M3.2 8.2 3.8 12l3.8-.6"/><path d="M10 6.8V10l2.4 1.6"/></svg>
+            <span id="chatsCount" class="tool-count">0</span>
+          </button>
+          <button type="button" id="newChat" class="icon-tool" title="New chat" aria-label="New chat">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 4.8h13v8.4H9.6L5.8 16.2v-3H3.5z"/><path d="M10 7.4v3.2M8.4 9h3.2"/></svg>
+          </button>
+        </div>
+        <div id="chatsList" class="chats-list" hidden></div>
+        <div id="contextTip" class="context-tip" role="tooltip" hidden></div>
+        <div id="slashMenu" class="slash-menu" hidden></div>
+      </form>
+    </aside>
+  </div>
+
+</section>
+</main>
+
+<dialog id="setup">
+  <div class="dialog-heading"><h2>Set up your local gym</h2><button id="closeSetup" class="icon-button" aria-label="Close setup">×</button></div>
+  <p>The app runs on your computer. Two local services power the practice environment.</p>
+  <h3>1. Start Docker</h3>
+  <p>Docker Desktop on macOS and Windows, or the Docker daemon on Linux; Windows additionally needs WSL 2. Runtime images download automatically the first time you run tests. Code executes without network access and cannot write to your host files.</p>
+  <p class="fine">Benchmark images are published for x86_64 only, so on Apple Silicon they run under emulation and are slower. Enable Rosetta in Docker Desktop → Settings → General for the best speed.</p>
+  <h3>2. Start Ollama</h3>
+  <p>Get Ollama from <a href="https://ollama.com/download" target="_blank" rel="noreferrer">ollama.com</a>. Pick which local model plays each role — the copilot is meant to be small enough to be wrong, the interviewer needs room to hold a conversation.</p>
+  <div class="model-picker"><label for="copilotModel">Practice copilot</label><select id="copilotModel"></select><p id="copilotNote" class="model-note"></p></div>
+  <div class="model-picker"><label for="interviewerModel">Interviewer</label><select id="interviewerModel"></select><p id="interviewerNote" class="model-note"></p></div>
+  <div class="model-picker"><label for="contextSize">Copilot context window</label><select id="contextSize"></select><p id="contextNote" class="model-note"></p></div>
+  <div class="inline"><input id="pullModel" aria-label="Model to download" placeholder="qwen3.5:0.8b"><button id="pull">Download through Ollama</button></div>
+  <button id="refreshStatus" class="ghost">Check connections</button>
+  <p id="setupStatus" role="status" class="progress-line"></p>
+  <p class="fine">16 runtime presets are available for imported code. The random task library covers 9 languages and supplies task-specific images. Generic images supply compilers, but project dependencies may need a custom prepared image.</p>
+</dialog>
+
+<dialog id="briefDialog" class="brief-dialog">
+  <div class="dialog-heading"><h2 id="briefTitle">Problem statement</h2><button id="closeBrief" class="icon-button" aria-label="Close problem statement">×</button></div>
+  <div class="brief-body" id="brief"></div>
+  <p class="brief-source"><small id="source"></small></p>
+</dialog>
+
+<dialog id="palette" class="palette">
+  <input id="paletteInput" placeholder="Go to file…" aria-label="Go to file" autocomplete="off">
+  <div id="paletteResults" class="palette-results"></div>
+  <p class="palette-hint"><kbd>↑</kbd><kbd>↓</kbd> navigate · <kbd>Enter</kbd> open · <kbd>Esc</kbd> close</p>
+</dialog>
+
+<div id="notice" role="status" hidden></div>
+<script src="/vendor/monaco/vs/loader.js"></script>
+<script type="module" src="/app.js"></script>
+</body></html>

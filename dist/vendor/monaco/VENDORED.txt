@@ -1,0 +1,1 @@
+monaco-editor 0.56.0 (MIT), vendored from https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.56.0.tgz (package/min/vs).
